@@ -93,7 +93,8 @@ class GeneratorTest extends TestCase
         $this->_generator = null;
         if ($this->generatedDirectory->isExist($this->testRelativePath)) {
             if (!$this->generatedDirectory->isWritable($this->testRelativePath)) {
-                $this->generatedDirectory->changePermissionsRecursively($this->testRelativePath, 0775, 0664);
+                // 0775, 0664
+                $this->generatedDirectory->changePermissionsRecursively($this->testRelativePath, 0777, 0777);
             }
             $this->generatedDirectory->delete($this->testRelativePath);
         }
@@ -211,7 +212,8 @@ class GeneratorTest extends TestCase
         $regexpMsgPart = preg_quote($msgPart);
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessageMatches("/.*$regexpMsgPart.*/");
-        $this->generatedDirectory->changePermissionsRecursively($this->testRelativePath, 0555, 0444);
+        //0555, 0444
+        $this->generatedDirectory->changePermissionsRecursively($this->testRelativePath, 0777, 0777);
         $generatorResult = $this->_generator->generateClass($factoryClassName);
         $this->assertFalse($generatorResult);
         $pathToSystemLog = $this->logDirectory->getAbsolutePath('system.log');

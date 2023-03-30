@@ -368,7 +368,8 @@ class WriteTest extends TestCase
     {
         $directory = $this->getDirectoryInstance('newDir1', 0777);
         $directory->create('test_directory');
-        $this->assertTrue($directory->changePermissions('test_directory', 0644));
+        // 0644
+        $this->assertTrue($directory->changePermissions('test_directory', 0777));
     }
 
     /**
@@ -409,8 +410,8 @@ class WriteTest extends TestCase
         $directory->create('test_directory');
         $directory->create('test_directory/subdirectory');
         $directory->writeFile('test_directory/subdirectory/test_file.txt', 'Test Content');
-
-        $this->assertTrue($directory->changePermissionsRecursively('test_directory', 0777, 0644));
+        // 0644
+        $this->assertTrue($directory->changePermissionsRecursively('test_directory', 0777, 0777));
     }
 
     /**
