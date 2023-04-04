@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Zou
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Zou.com license that is
+ * available through the world-wide-web at this URL:
+ * https://bbs.mallol.cn/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Zou
+ * @package     Zou_BannerSlider
+ * @copyright   Copyright (c) Zou (https://bbs.mallol.cn/)
+ * @license     https://bbs.mallol.cn/LICENSE.txt
+ */
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+    <widget class="Zou\BannerSlider\Block\Widget" id="Zou_bannerslider_widget">
+        <label translate="true">Zou Banner Slider</label>
+        <description translate="true">Banner Slider list</description>
+        <parameters>
+            <parameter name="slider_id" xsi:type="select" required="true" visible="true" source_model="Zou\BannerSlider\Model\Config\Source\SlidersWidget">
+                <label translate="true">Select Slider</label>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>

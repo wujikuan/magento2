@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="empty" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+    	<!-- 在底部(footer)添加block (footer_cont) -->
+        <referenceContainer name="footer">
+            <block class="Magento\Framework\View\Element\Template" name="footer_cont" as="footer_cont" before="footer_links" template="Magento_Theme::html/footer_cont.phtml"/>
+        </referenceContainer>
+        
+        <referenceBlock name="footer_links" remove="true" />
+        <referenceBlock name="report.bugs" remove="true"/>
+        <referenceBlock name="copyright" remove="true"/>
+    </body>
+</page>

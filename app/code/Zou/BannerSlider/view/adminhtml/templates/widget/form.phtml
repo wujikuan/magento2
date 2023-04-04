@@ -1,0 +1,39 @@
+<?php
+/**
+ * Zou
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Zou.com license that is
+ * available through the world-wide-web at this URL:
+ * https://bbs.mallol.cn/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Zou
+ * @package     Zou_BannerSlider
+ * @copyright   Copyright (c) Zou (https://bbs.mallol.cn/)
+ * @license     https://bbs.mallol.cn/LICENSE.txt
+ */
+
+/** @var $block \Zou\BannerSlider\Block\Adminhtml\Banner\Edit\Form */
+?>
+<div class="entry-edit form-inline" id="zou-bannerslider">
+    <?= $block->getFormHtml(); ?>
+</div>
+<?= $block->getChildHtml('form_after'); ?>
+
+<script type="text/x-magento-init">
+    {
+        "#zou-bannerslider": {
+            "Zou_BannerSlider/js/view/bannerslider":{
+                "templateHtml": "<?= $block->escapeJs($block->getTemplateHtml()); ?>",
+                "imgUrls": "<?= $block->escapeJs($block->getImageUrls()); ?>"
+            }
+        }
+    }
+
+</script>

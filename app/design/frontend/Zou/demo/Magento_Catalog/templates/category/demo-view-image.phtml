@@ -1,0 +1,10 @@
+<!-- block: Magento\Catalog\Block\Category\View -->
+<?php 
+$category = $this->getCurrentCategory();
+$_imgUrl  =  $category->getImageUrl();
+if($_imgUrl):
+?>
+<section id='imagearea' class="category-image">
+	<img class="image" src="<?php echo $_imgUrl; ?>"/>
+</section>
+<?php endif;?>

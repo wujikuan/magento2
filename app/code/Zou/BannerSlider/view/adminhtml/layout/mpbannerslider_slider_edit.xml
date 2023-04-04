@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Zou
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Zou.com license that is
+ * available through the world-wide-web at this URL:
+ * https://bbs.mallol.cn/LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Zou
+ * @package     Zou_BannerSlider
+ * @copyright   Copyright (c) Zou (https://bbs.mallol.cn/)
+ * @license     https://bbs.mallol.cn/LICENSE.txt
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Zou\BannerSlider\Block\Adminhtml\Slider\Edit" name="zou_bannerslider_slider_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+            <block class="Zou\BannerSlider\Block\Adminhtml\Slider\Edit\Tabs" name="zou_bannerslider_slider_tabs">
+                <block class="Zou\BannerSlider\Block\Adminhtml\Slider\Edit\Tab\Slider" name="zou_bannerslider_slider_edit_tab_slider"/>
+                <block class="Zou\BannerSlider\Block\Adminhtml\Slider\Edit\Tab\Banner" name="zou_bannerslider_slider_edit_tab_banner"/>
+                <block class="Zou\BannerSlider\Block\Adminhtml\Slider\Edit\Tab\Design" name="zou_bannerslider_slider_edit_tab_design"/>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">slider</argument>
+                    <argument name="block" xsi:type="string">zou_bannerslider_slider_edit_tab_slider</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">banner</argument>
+                    <argument name="block" xsi:type="string">zou_bannerslider_slider_edit_tab_banner</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">design</argument>
+                    <argument name="block" xsi:type="string">zou_bannerslider_slider_edit_tab_design</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
