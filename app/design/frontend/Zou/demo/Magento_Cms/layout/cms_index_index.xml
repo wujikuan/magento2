@@ -13,9 +13,9 @@
     </head>
     <body>
         <!--  定义一个block (bannerslider)，放到页面顶部 -->
-    	<referenceBlock name="page.top">
-        	<block class="Magento\Framework\View\Element\Template" name="bannerslider" template="Magento_Cms::html/homepage/home-bannerslider.phtml"/>
-        </referenceBlock>
+        <referenceBlock name="page.top" remove="true" />
+        <referenceBlock name= "bannerslider.banner" remove="true" />
+
         <!--  在内容主体(content)部分 添加我们自己的block (zou_home_content) -->
         <referenceBlock name="content">
 	  		<block class="Magento\Framework\View\Element\Template" name="zou_home_content" before="home_block_container" template="Magento_Cms::html/homepage/home_content.phtml"/>

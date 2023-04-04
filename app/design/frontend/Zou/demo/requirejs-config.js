@@ -12,6 +12,6 @@ var config = {
         // }
     },
    	deps: [
-        // "js/demo"
+        "js/demo"
    	]
 };

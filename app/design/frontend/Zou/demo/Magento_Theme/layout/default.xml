@@ -7,11 +7,16 @@
 -->
 <page layout="empty" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
+
+        <referenceBlock name="page.top" remove="true" />
+        <referenceBlock name= "bannerslider.banner" remove="true" />
+        
     	<!-- 在底部(footer)添加block (footer_cont) -->
         <referenceContainer name="footer">
             <block class="Magento\Framework\View\Element\Template" name="footer_cont" as="footer_cont" before="footer_links" template="Magento_Theme::html/footer_cont.phtml"/>
         </referenceContainer>
-        
+
+
         <referenceBlock name="footer_links" remove="true" />
         <referenceBlock name="report.bugs" remove="true"/>
         <referenceBlock name="copyright" remove="true"/>
