@@ -7,4 +7,5 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Zou\Demo\Api\HelloInterface" type="Zou\Demo\Model\Hello" />
 </config>
