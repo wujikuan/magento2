@@ -91,7 +91,6 @@ class AdminTokenService implements \Magento\Integration\Api\AdminTokenServiceInt
      */
     public function createAdminAccessToken($username, $password)
     {
-        return '1111';
         $this->validatorHelper->validate($username, $password);
         $this->getRequestThrottler()->throttle($username, RequestThrottler::USER_TYPE_ADMIN);
         $this->userModel->login($username, $password);

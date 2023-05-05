@@ -33,14 +33,14 @@ Options -MultiViews
 ## setting MIME types
 
 # JavaScript
-AddType application/javascript js jsonp
+AddType application/javascript .js jsonp
 AddType application/json json
 
 # HTML
 AddType text/html html
 
 # CSS
-AddType text/css css
+AddType text/css .css
 
 # Images and icons
 AddType image/x-icon ico

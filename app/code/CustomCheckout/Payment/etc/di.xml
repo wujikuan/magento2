@@ -1,0 +1,20 @@
+<!--preference(重写前的类);type(重写后的类)-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="MyCustomPaymentConfigProvider" xsi:type="object">CustomCheckout\Payment\Model\MyCustomPaymentConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Payment\Model\MethodList">
+        <arguments>
+            <argument name="methods" xsi:type="array">
+                <item name="custompayment" xsi:type="object"> CustomCheckout\Payment\Model\CustomPayment</item>
+            </argument>
+        </arguments>
+    </type>
+
+</config>
