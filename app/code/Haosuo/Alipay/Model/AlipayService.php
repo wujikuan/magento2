@@ -45,7 +45,10 @@ class AlipayService extends AbstractMethod implements AlipayServiceInterface
      * @var string
      */
     protected $_infoBlockType = \Haosuo\Alipay\Block\Info\Alipay::class;
-
+    /**
+     * @var array
+     */
+    protected $config;
 
     /**
      * Availability option
@@ -59,7 +62,7 @@ class AlipayService extends AbstractMethod implements AlipayServiceInterface
     ){
         $this->_checkoutSession = $checkoutSession;
         $this->_urlBuilder = $urlBuilder;
-
+        $this->config = AlipayConfig::getConfig();
     }
 
 
@@ -71,27 +74,6 @@ class AlipayService extends AbstractMethod implements AlipayServiceInterface
 
         $order = $this->_checkoutSession->getLastRealOrder();
 
-        // 获取支付宝接口所需的参数
-      /*  $params = [
-            'app_id' => $this->appid,
-            'method' => 'alipay.trade.page.pay',
-            'charset' => 'utf-8',
-            'sign_type' => 'RSA2',
-            'timestamp' => '2023-05-09 18:24:40',
-            'version' => '1.0',
-            'notify_url' => $this->_urlBuilder->getUrl($this->notify_url),
-            'return_url' => $this->_urlBuilder->getUrl($this->return_url),
-            'format'=>'json',
-            'alipay_sdk'=>'alipay-sdk-php-20161101',
-            'biz_content' => json_encode([
-                'out_trade_no' => $order->getIncrementId(),
-                'product_code' => 'FAST_INSTANT_TRADE_PAY',
-                'total_amount' => $order->getGrandTotal(),
-                'subject' => 'Order ' . $order->getIncrementId(),
-            ]),
-        ];*/
-
-        $config = AlipayConfig::getConfig();
         $totalPrice = $order->getGrandTotal();
         // 最少支付1分钱
         if ($totalPrice < 0.004){
@@ -105,12 +87,7 @@ class AlipayService extends AbstractMethod implements AlipayServiceInterface
         $payRequestBuilder->setTotalAmount(round($totalPrice,2));
         $payRequestBuilder->setOutTradeNo($order->getIncrementId());
 
-      /*  $payRequestBuilder = new AlipayTradePagePayContentBuilder();
-        $payRequestBuilder->setBody('Order ' . 000000025);
-        $payRequestBuilder->setSubject('Order ' . 000000025);
-        $payRequestBuilder->setTotalAmount(33.53);
-        $payRequestBuilder->setOutTradeNo(000000025);*/
-
+        $config = $this->config;
         $aop = new AlipayTradeService($config);
 
         /**
@@ -129,6 +106,21 @@ class AlipayService extends AbstractMethod implements AlipayServiceInterface
     }
 
 
+    /**
+     * @return string Token created
+     * @throws Exception
+     */
+    public function getNotifyAction()
+    {
+        $arr=$_POST;
+        $return_url = $this->_urlBuilder->getRouteUrl($this->config['return_url']);
+        $alipaySevice = new AlipayTradeService($this->config);
+        $alipaySevice->writeLog('alipay_result_start');
+        $alipaySevice->writeLog(var_export($_POST,true));
+        $alipaySevice->writeLog('alipay_result_end');
+
+        $result = $alipaySevice->check($arr);
+    }
 
 }
 

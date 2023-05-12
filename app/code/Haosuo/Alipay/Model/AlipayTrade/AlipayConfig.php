@@ -18,7 +18,7 @@ class AlipayConfig
 
 
             //异步通知地址
-            'notify_url' => "http://localhost/alipay.trade.page.pay-PHP-UTF-8/notify_url.php",
+            'notify_url' => "alipay/alipay/notify",
 
             //同步跳转
             'return_url' => "checkout/onepage/success",

@@ -5,6 +5,7 @@ use Magento\Framework\Exception\AuthenticationException;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 
+
 /**
  * Interface providing token generation for Admins
  *
@@ -22,5 +23,15 @@ interface AlipayServiceInterface
      * @throws LocalizedException
      */
     public function getOrderPlaceRedirectUrl();
+
+    /**
+     * Create access token for admin given the admin credentials.
+     *
+     * @return string Token created
+     * @throws InputException For invalid input
+     * @throws AuthenticationException
+     * @throws LocalizedException
+     */
+    public function getNotifyAction();
 
 }

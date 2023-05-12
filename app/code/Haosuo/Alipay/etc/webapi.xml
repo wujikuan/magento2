@@ -13,4 +13,11 @@
             <resource ref="anonymous"/>
         </resources>
     </route>
+
+    <route url="/V1/alipay/redirect/notify_action" method="POST">
+        <service class="Haosuo\Alipay\Api\AlipayServiceInterface" method="getNotifyAction"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
 </routes>
