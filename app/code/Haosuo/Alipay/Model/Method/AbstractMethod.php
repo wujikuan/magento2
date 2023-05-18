@@ -204,6 +204,7 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         DirectoryHelper $directory = null,
         AlipayTradeRefundContentBuilder $alipayTradeRefund,
         AlipayTradeService $alipayTradeService,
+        \Magento\Sales\Model\OrderFactory $order,
         array $data = [],
     ) {
         parent::__construct(
@@ -223,6 +224,7 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
 
         $this->_alipayTradeRefund = $alipayTradeRefund;
         $this->_alipayTradeService = $alipayTradeService;
+        $this->_order = $order;
 
     }
 
