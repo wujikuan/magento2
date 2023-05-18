@@ -7,6 +7,8 @@
 namespace Haosuo\Alipay\Model\Method;
 
 use Haosuo\Alipay\Helper\Data;
+use Haosuo\Alipay\Model\AlipayTrade\pagepay\buildermodel\AlipayTradeRefundContentBuilder;
+use Haosuo\Alipay\Model\AlipayTrade\pagepay\service\AlipayTradeService;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DataObject;
 use Magento\Payment\Model\InfoInterface;
@@ -199,8 +201,10 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         \Magento\Payment\Model\Method\Logger $logger,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = [],
         DirectoryHelper $directory = null,
+        AlipayTradeRefundContentBuilder $alipayTradeRefund,
+        AlipayTradeService $alipayTradeService,
+        array $data = [],
     ) {
         parent::__construct(
             $context,
@@ -216,6 +220,9 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         $this->logger = $logger;
         $this->directory = $directory ?: ObjectManager::getInstance()->get(DirectoryHelper::class);
         $this->initializeData($data);
+
+        $this->_alipayTradeRefund = $alipayTradeRefund;
+        $this->_alipayTradeService = $alipayTradeService;
 
     }
 
@@ -648,7 +655,7 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         $this->_alipayTradeRefund->setOutTradeNo($outTradeNo);
         $this->_alipayTradeRefund->setTradeNo($tradeNo);
         $this->_alipayTradeRefund->setRefundAmount($amount);
-        $response = $this->alipayTradeService->Refund($this->alipayTradeRefund);
+        $response = $this->_alipayTradeService->Refund($this->alipayTradeRefund);
 
         $responseResult = json_decode($response);
         if ($responseResult['code'] != 10000 && $response['msg'] != 'Success'){
