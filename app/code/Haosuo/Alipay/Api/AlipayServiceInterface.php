@@ -32,6 +32,6 @@ interface AlipayServiceInterface
      * @throws AuthenticationException
      * @throws LocalizedException
      */
-    public function getNotifyAction();
+    public function refundAction();
 
 }

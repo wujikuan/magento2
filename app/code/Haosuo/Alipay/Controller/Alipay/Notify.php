@@ -2,6 +2,8 @@
 
 namespace Haosuo\Alipay\Controller\Alipay;
 
+use Haosuo\Alipay\Helper\Data;
+use Haosuo\Alipay\Model\AlipayService;
 use Haosuo\Alipay\Model\AlipayTrade\AlipayConfig;
 use Haosuo\Alipay\Model\AlipayTrade\pagepay\service\AlipayTradeService;
 use Magento\Backend\App\Action\Context;
@@ -17,6 +19,9 @@ use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Sales\Model\Order\Email\Sender\ShipmentSender;
 use Magento\Sales\Model\Order\ShipmentFactory;
 use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Sales\Model\Order\CreditmemoFactory;
+use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface as TransactionBuilderInterface;
+
 
 class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareActionInterface
 {
@@ -47,6 +52,9 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
      */
     protected $registry;
 
+    protected $_dataHelper;
+    protected $_order;
+
     /**
      * @var InvoiceService
      */
@@ -57,6 +65,12 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
      */
     private $salesData;
 
+    protected $alipayTradeService;
+    protected $_creditmemo ;
+    protected $_transactionBuilder;
+
+    protected $alipayService;
+
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
@@ -65,7 +79,13 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
         ShipmentSender $shipmentSender,
         ShipmentFactory $shipmentFactory,
         InvoiceService $invoiceService,
-        SalesData $salesData = null
+        SalesData $salesData = null,
+        Data $dataHelper,
+        \Magento\Sales\Model\OrderFactory $order,
+        AlipayTradeService $alipayTradeService,
+        CreditmemoFactory $creditmemoFactory,
+        TransactionBuilderInterface $transactionBuilder,
+        AlipayService $alipayService
     )
     {
         $this->resultJsonFactory = $resultJsonFactory;
@@ -77,6 +97,13 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
         parent::__construct($context);
         $this->salesData = $salesData ?: \Magento\Framework\App\ObjectManager::getInstance()
             ->get(SalesData::class);
+        $this->_dataHelper = $dataHelper;
+        $this->_order = $order;
+        $this->_alipayTradeService = $alipayTradeService;
+        $this->_creditmemo = $creditmemoFactory;
+        $this->_transactionBuilder = $transactionBuilder;
+        $this->alipayService = $alipayService;
+
     }
 
     public function createCsrfValidationException(
@@ -92,50 +119,49 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
 
     public function execute(){
 
-        $config = AlipayConfig::getConfig();
-        $alipayService = new AlipayTradeService($config);
-        // 测试数据
-       /* $_POST = array (
-            'gmt_create' => '2023-05-11 16:45:40',
-            'charset' => 'UTF-8',
-            'gmt_payment' => '2023-05-11 16:45:52',
-            'notify_time' => '2023-05-11 16:45:55',
-            'subject' => 'Order 000000018',
-            'sign' => 'PB+/jFLvgMTkXgv2OoOH7ZdcC5UCU2FDm17vbUKCQlNyocGCFBYKC8dFY+q+7KIKfLGBRKGAZ7bU3dBwQ3TOqhKEHg3VmgU5f8+SyR3FfHivF9ml1uHmN9JE+GY6XRazwrc/DFy57fRmxiGjSw7bmhhdLsFh2zuCK4WWZGiPRKR1RIXRYpaSvNPkRp5Agcc1u30aiSVMh9lfCU5JIQxzQhgpluBkxqvfRA38Mku1KR5Qi+plMQKCF5SH6JAzIkFZHcWDGG8WVfYoLDsdKnooVf0OI3sW/ZYbrs2EPUKJDGEDKrIwHN7gcNXs6AFpsyHffya408OYTPaywIz4206pDQ==',
-            'buyer_id' => '2088102177292779',
-            'body' => 'Order 000000018',
-            'invoice_amount' => '78.00',
-            'version' => '1.0',
-            'notify_id' => '2023051100222164607092770522089415',
-            'fund_bill_list' => '[{"amount":"78.00","fundChannel":"ALIPAYACCOUNT"}]',
-            'notify_type' => 'trade_status_sync',
-            'out_trade_no' => '000000018',
-            'total_amount' => '78.00',
-            'trade_status' => 'TRADE_SUCCESS',
-            'trade_no' => '2023051122001492770502036725',
-            'auth_app_id' => '2016092400585786',
-            'receipt_amount' => '78.00',
-            'point_amount' => '0.00',
-            'app_id' => '2016092400585786',
-            'buyer_pay_amount' => '78.00',
-            'sign_type' => 'RSA2',
-            'seller_id' => '2088102177065553',
-        );*/
 
+        // $alipayService = new AlipayTradeService();
+        // 测试数据
+//        $_POST = array (
+//            'gmt_create' => '2023-05-11 16:45:40',
+//            'charset' => 'UTF-8',
+//            'gmt_payment' => '2023-05-11 16:45:52',
+//            'notify_time' => '2023-05-11 16:45:55',
+//            'subject' => 'Order 000000018',
+//            'sign' => 'PB+/jFLvgMTkXgv2OoOH7ZdcC5UCU2FDm17vbUKCQlNyocGCFBYKC8dFY+q+7KIKfLGBRKGAZ7bU3dBwQ3TOqhKEHg3VmgU5f8+SyR3FfHivF9ml1uHmN9JE+GY6XRazwrc/DFy57fRmxiGjSw7bmhhdLsFh2zuCK4WWZGiPRKR1RIXRYpaSvNPkRp5Agcc1u30aiSVMh9lfCU5JIQxzQhgpluBkxqvfRA38Mku1KR5Qi+plMQKCF5SH6JAzIkFZHcWDGG8WVfYoLDsdKnooVf0OI3sW/ZYbrs2EPUKJDGEDKrIwHN7gcNXs6AFpsyHffya408OYTPaywIz4206pDQ==',
+//            'buyer_id' => '2088102177292779',
+//            'body' => 'Order 000000018',
+//            'invoice_amount' => '78.00',
+//            'version' => '1.0',
+//            'notify_id' => '2023051100222164607092770522089415',
+//            'fund_bill_list' => '[{"amount":"78.00","fundChannel":"ALIPAYACCOUNT"}]',
+//            'notify_type' => 'trade_status_sync',
+//            'out_trade_no' => '000000024',
+//            'total_amount' => '78.00',
+//            'trade_status' => 'TRADE_SUCCESS',
+//            'trade_no' => '2023051122001492770502036725',
+//            'auth_app_id' => '2016092400585786',
+//            'receipt_amount' => '78.00',
+//            'point_amount' => '0.00',
+//            'app_id' => '2016092400585786',
+//            'buyer_pay_amount' => '78.00',
+//            'sign_type' => 'RSA2',
+//            'seller_id' => '2088102177065553',
+//        );
+//
         $arr=$_POST;
 
-        $alipayService->writeLog('alipay_result_start');
-        $alipayService->writeLog(var_export($_POST,true));
-        $alipayService->writeLog('alipay_result_end');
+        $this->_alipayTradeService->writeLog('alipay_result_start');
+        $this->_alipayTradeService->writeLog(var_export($_POST,true));
+        $this->_alipayTradeService->writeLog('alipay_result_end');
+
         // 验签
         $result = true;
-        $result = $alipayService->check($arr);
+        $result = $this->_alipayTradeService->check($arr);
 
         if($result) {//验证成功
-
             //商户订单号
             $out_trade_no = $_POST['out_trade_no'];
-
             //支付宝交易号
             $trade_no = $_POST['trade_no'];
             //交易状态
@@ -152,7 +178,8 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
                 // 退款日期超过可退款期限后（如三个月可退款），支付宝系统发送该交易状态通知
             }
             else if ($_POST['trade_status'] == 'TRADE_SUCCESS') {
-                $this->updateOrderAndAddInvoice($arr['out_trade_no'],$alipayService);
+
+                $this->updateOrderAndAddInvoice($arr['out_trade_no'],$arr,$this->_alipayTradeService);
                 //判断该笔订单是否在商户网站中已经做过处理
                 //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
                 //请务必判断请求时的total_amount与通知时获取的total_fee为一致的
@@ -169,10 +196,11 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
         }
     }
 
-    private function updateOrderAndAddInvoice($incrementId,$alipayService){
+    private function updateOrderAndAddInvoice($incrementId,$data,$alipayService){
 
         try {
-            $order = $this->_objectManager->create(\Magento\Sales\Model\Order::class)->load($incrementId,'increment_id');
+            $order = $this->_order->create()->loadByIncrementId($incrementId);
+
             if (!$order->getId()) {
                 // throw new \Magento\Framework\Exception\LocalizedException(__('The order no longer exists.'));
                 $alipayService->writeLog('The order no longer exists');
@@ -209,12 +237,18 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
                 }
 
                 $this->registry->register('current_invoice', $invoice);
-                if (!empty($data['capture_case'])) {
-                    $invoice->setRequestedCaptureCase($data['capture_case']);
-                }
+                // capture_case ['online','offline','not_capture']
+
+                $invoice->setRequestedCaptureCase('online');
+
+//                if (!empty($data['capture_case'])) {
+//                    $invoice->setRequestedCaptureCase($data['capture_case']);
+//                }
 
                 $invoice->register();
                 $invoice->getOrder()->setCustomerNoteNotify(!empty($data['send_email']));
+                $invoice->setData('transaction_id',$data['trade_no']);
+                // $invoice->setTransactionId($data['trade_no']);
                 $invoice->getOrder()->setIsInProcess(true);
 
                 $transactionSave = $this->_objectManager->create(
@@ -224,8 +258,33 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
                 )->addObject(
                     $invoice->getOrder()
                 );
+//                $invoice->save();
+
+                $payment = $order->getPayment();
+                $transaction = $this->_transactionBuilder
+                    ->setPayment($payment)
+                    ->setOrder($order)
+                    ->setTransactionId($data['trade_no'])
+                    ->addAdditionalInformation(
+                        \Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS,
+                        $data
+                    )
+                    ->setFailSafe(true)
+                    ->build(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE);
+
+                $payment->setIsTransactionClosed(false);
+                $payment->save();
+                $order->save();
+
                 $transactionSave->save();
+
+                $invoiceFirstItem = $order->getInvoiceCollection()->getFirstItem();
+                $creditMemo = $this->_creditmemo->createByOrder($order, $order->getData());
+                $creditMemo->setOrder($order);
+                $creditMemo->setInvoice($invoiceFirstItem);
+                $creditMemo->save();
             }
+            return 'success';
         }catch (LocalizedException $e){
             $alipayService->writeLog("The invoice can't be created without products. Add products and try again");
             return 'fail';
@@ -233,6 +292,8 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
             $alipayService->writeLog("The invoice can't be saved at this time. Please try again later.");
             return 'fail';
         }
-        return 'success';
+        return 'fail';
     }
+
+
 }

@@ -7,15 +7,13 @@ namespace Haosuo\Alipay\Model;
 
 use Exception;
 use Haosuo\Alipay\Api\AlipayServiceInterface;
-use Haosuo\Alipay\Model\AlipayTrade\AlipayConfig;
+use Haosuo\Alipay\Helper\Data;
+use Magento\Framework\App\ActionFactory;
 use Magento\Framework\UrlInterface;
-use Magento\Payment\Model\Method\AbstractMethod;
+use Haosuo\Alipay\Model\Method\AbstractMethod;
 use Magento\Quote\Api\Data\PaymentMethodExtensionInterface;
-
 use Haosuo\Alipay\Model\AlipayTrade\pagepay\service\AlipayTradeService;
 use Haosuo\Alipay\Model\AlipayTrade\pagepay\buildermodel\AlipayTradePagePayContentBuilder;
-use Psr\Log\LoggerInterface;
-
 
 /**
  * Class Alipay
@@ -25,16 +23,13 @@ use Psr\Log\LoggerInterface;
  * @api
  * @since 100.0.2
  */
-class AlipayService extends AbstractMethod implements AlipayServiceInterface
+class AlipayService  implements AlipayServiceInterface
 {
-    const PAYMENT_METHOD_CHECKMO_CODE = 'alipay';
-
     /**
      * Payment method code
      *
      * @var string
      */
-    protected $_code = self::PAYMENT_METHOD_CHECKMO_CODE;
 
     /**
      * @var string
@@ -48,21 +43,28 @@ class AlipayService extends AbstractMethod implements AlipayServiceInterface
     /**
      * @var array
      */
-    protected $config;
-
+//    protected $config;
+    protected $_dataHelper;
     /**
      * Availability option
      *
      * @var bool
      */
     protected $_isOffline = true;
+
+    protected $_alipaySevice ;
     function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,
         UrlInterface $urlBuilder,
+        Data $dataHelper,
+        AlipayTradeService $alipaySevice
     ){
         $this->_checkoutSession = $checkoutSession;
         $this->_urlBuilder = $urlBuilder;
-        $this->config = AlipayConfig::getConfig();
+        // $this->config = AlipayConfig::getConfig();
+        $this->_dataHelper = $dataHelper;
+        $this->_alipaySevice = $alipaySevice;
+
     }
 
 
@@ -87,9 +89,8 @@ class AlipayService extends AbstractMethod implements AlipayServiceInterface
         $payRequestBuilder->setTotalAmount(round($totalPrice,2));
         $payRequestBuilder->setOutTradeNo($order->getIncrementId());
 
-        $config = $this->config;
-        $aop = new AlipayTradeService($config);
-
+        // $config = $this->config;
+        // $aop = new AlipayTradeService();
         /**
          * pagePay 电脑网站支付请求
          * @param $builder 业务参数，使用buildmodel中的对象生成。
@@ -97,29 +98,17 @@ class AlipayService extends AbstractMethod implements AlipayServiceInterface
          * @param $notify_url 异步通知地址，公网可以访问
          * @return $response 支付宝返回的信息
          */
-        $return_url =  $this->_urlBuilder->getRouteUrl($config['return_url']);
-        $notify_url =  $this->_urlBuilder->getRouteUrl($config['notify_url']);
+        $return_url =  $this->_urlBuilder->getRouteUrl($this->_dataHelper->getReturnUrl());
+        $notify_url =  $this->_urlBuilder->getRouteUrl($this->_dataHelper->getNotifyUrl());
 
-        $response = $aop->pagePay($payRequestBuilder,$return_url,$notify_url);
+        $response = $this->_alipaySevice->pagePay($payRequestBuilder,$return_url,$notify_url);
 
         return $response;
     }
 
-
-    /**
-     * @return string Token created
-     * @throws Exception
-     */
-    public function getNotifyAction()
+    public function refundAction()
     {
-        $arr=$_POST;
-        $return_url = $this->_urlBuilder->getRouteUrl($this->config['return_url']);
-        $alipaySevice = new AlipayTradeService($this->config);
-        $alipaySevice->writeLog('alipay_result_start');
-        $alipaySevice->writeLog(var_export($_POST,true));
-        $alipaySevice->writeLog('alipay_result_end');
-
-        $result = $alipaySevice->check($arr);
+        // TODO: Implement refundAction() method.
     }
 
 }

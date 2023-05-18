@@ -11,6 +11,7 @@ namespace Haosuo\Alipay\Model\AlipayTrade\pagepay\service;
  */
 
 
+use Haosuo\Alipay\Helper\Data;
 use Haosuo\Alipay\Model\AlipayTrade\aop\AopClient;
 use Exception;
 use Haosuo\Alipay\Model\AlipayTrade\aop\request\AlipayDataDataserviceBillDownloadurlQueryRequest;
@@ -53,21 +54,21 @@ class AlipayTradeService {
     private $logger;
 
     /**
-     * @param $alipay_config
-     * @param LoggerInterface $logger
+     * @param \Haosuo\Alipay\Helper\Data $dataHelper
      * @throws Exception
      */
-	function __construct($alipay_config){
+	function __construct(){
 
-//        $this->logger = $logger;
+        $dataHelper = \Magento\Framework\App\ObjectManager::getInstance()->get('\Haosuo\Alipay\Helper\Data');
 
-		$this->gateway_url = $alipay_config['gatewayUrl'];
-		$this->appid = $alipay_config['app_id'];
-		$this->private_key = $alipay_config['merchant_private_key'];
-		$this->alipay_public_key = $alipay_config['alipay_public_key'];
-		$this->charset = $alipay_config['charset'];
-		$this->signtype=$alipay_config['sign_type'];
-        $this->log_path = $alipay_config['log_path'];
+        $this->gateway_url = $dataHelper->getGatewayUrl();
+		$this->appid = $dataHelper->getAppId();
+		$this->private_key = $dataHelper->getMerchantPrivateKey();
+		$this->alipay_public_key = $dataHelper->getAlipayPublicKey();
+		$this->charset = 'UTF-8';
+		$this->signtype = 'RSA2';
+        $this->log_path = '';
+
 
 		if(empty($this->appid)||trim($this->appid)==""){
 			throw new Exception("appid should not be NULL!");

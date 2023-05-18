@@ -48,6 +48,37 @@
                     <label>Maximum Order Total</label>
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
+
+                <field id="app_id" translate="label" type="text" sortOrder="100"  showInDefault="1" showInWebsite="1">
+                    <label>appId</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+
+                <field id="merchant_private_key" translate="label" type="text" sortOrder="101" showInDefault="1"  showInWebsite="1">
+                    <label>Merchant private key</label>
+                </field>
+
+                <field id="alipay_public_key" translate="label" type="text" sortOrder="101" showInDefault="1"  showInWebsite="1">
+                    <label>Alipay Public key</label>
+                </field>
+
+                <field id="notify_url" translate="label" type="text" sortOrder="102" showInDefault="1" showInWebsite="1">
+                    <label>Notify Url</label>
+                </field>
+
+                <field id="return_url" translate="label" type="text" sortOrder="103"  showInDefault="1" showInWebsite="1">
+                    <label>Return Url</label>
+                </field>
+
+                <field id="gateway_url" translate="label" type="text" sortOrder="103"  showInDefault="1" showInWebsite="1">
+                    <label>Gateway Url</label>
+                </field>
+
+                <field id="capture" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Capture</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
                 <field id="model"></field>
             </group>
         </section>
