@@ -1,4 +1,6 @@
 <?php
+namespace Haosuo\Alipay\Model\AlipayTrade\aop;
+
 /**
  * Created by PhpStorm.
  * User: jiehua
@@ -13,4 +15,4 @@ class SignData {
 
     public $sign=null;
 
-} 
+}

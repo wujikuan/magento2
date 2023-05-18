@@ -17,8 +17,7 @@ use Magento\Payment\Observer\AbstractDataAssignObserver;
 use Magento\Quote\Api\Data\PaymentMethodInterface;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Directory\Helper\Data as DirectoryHelper;
-//use Haosuo\Alipay\Model\AlipayTrade\pagepay\buildermodel\AlipayTradeRefundContentBuilder;
-//use Haosuo\Alipay\Model\AlipayTrade\pagepay\service\AlipayTradeService;
+
 
 /**
  * Payment method abstract model
@@ -199,12 +198,13 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         \Magento\Payment\Helper\Data $paymentData,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Payment\Model\Method\Logger $logger,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        DirectoryHelper $directory = null,
         AlipayTradeRefundContentBuilder $alipayTradeRefund,
         AlipayTradeService $alipayTradeService,
         \Magento\Sales\Model\OrderFactory $order,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        DirectoryHelper $directory = null,
+
         array $data = [],
     ) {
         parent::__construct(
@@ -222,6 +222,9 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         $this->directory = $directory ?: ObjectManager::getInstance()->get(DirectoryHelper::class);
         $this->initializeData($data);
 
+//        $this->_alipayTradeRefund = \Magento\Framework\App\ObjectManager::getInstance()->get('\Haosuo\Alipay\Model\AlipayTrade\pagepay\buildermodel\AlipayTradeRefundContentBuilder');
+//        $this->_alipayTradeService = \Magento\Framework\App\ObjectManager::getInstance()->get('\Haosuo\Alipay\Model\AlipayTrade\pagepay\service\AlipayTradeService');
+//        $this->_order = \Magento\Framework\App\ObjectManager::getInstance()->get('\Magento\Sales\Model\OrderFactory');
         $this->_alipayTradeRefund = $alipayTradeRefund;
         $this->_alipayTradeService = $alipayTradeService;
         $this->_order = $order;
@@ -649,18 +652,18 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
             throw new \Magento\Framework\Exception\LocalizedException(__('The refund order is not exist.'));
         }
         $outTradeNo = $order->getData('increment_id');
-
         $tradeNo = $payment->getData('last_trans_id');
-
-        $outTradeNo= '2023518104026278';
-        $tradeNo = '2023051822001492770502039592';
+//        $outTradeNo= '2023518104026278';
+//        $tradeNo = '2023051822001492770502039592';
         $this->_alipayTradeRefund->setOutTradeNo($outTradeNo);
         $this->_alipayTradeRefund->setTradeNo($tradeNo);
         $this->_alipayTradeRefund->setRefundAmount($amount);
-        $response = $this->_alipayTradeService->Refund($this->alipayTradeRefund);
+        $response = $this->_alipayTradeService->Refund($this->_alipayTradeRefund);
 
-        $responseResult = json_decode($response);
-        if ($responseResult['code'] != 10000 && $response['msg'] != 'Success'){
+        $this->_alipayTradeService->writeLog('alipay_refund_start');
+        $this->_alipayTradeService->writeLog(var_export($response,true));
+        $this->_alipayTradeService->writeLog('alipay_refund_end');
+        if ($response->code != 10000 && $response->msg != 'Success'){
             throw new \Magento\Framework\Exception\LocalizedException(__('The refund order is fail.'));
         }
         $payment->setIsTransactionClosed(true);
