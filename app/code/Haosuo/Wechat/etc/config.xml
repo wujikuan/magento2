@@ -8,20 +8,21 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <payment>
-            <alipay>
+            <wechat>
                 <active>1</active>
-                <model>Haosuo\Alipay\Model\Alipay</model>
+                <model>Haosuo\Wechat\Model\Wechat</model>
                 <order_status>pending</order_status>
-                <title>Alipay</title>
+                <title>Wechat</title>
                 <allowspecific>0</allowspecific>
-                <app_id></app_id>
+                <app_id> </app_id>
                 <merchant_private_key></merchant_private_key>
-                <alipay_public_key></alipay_public_key>
+                <wechat_public_key></wechat_public_key>
                 <notify_url></notify_url>
                 <return_url></return_url>
                 <gateway_url></gateway_url>
+                <api_key></api_key>
                 <modal_debug>1</modal_debug>
-            </alipay>
+            </wechat>
         </payment>
     </default>
 </config>

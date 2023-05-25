@@ -1,0 +1,13 @@
+#example-modal{
+    display: none;
+}
+
+.payment-qrCode-content{
+    width: 100%;
+}
+
+.payment-qrCode-content >img{
+    width: 50%;
+    margin: 20px auto;
+    display: block;
+}

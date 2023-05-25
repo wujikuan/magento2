@@ -1,0 +1,16 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var $block Wechat
+ */
+
+use Haosuo\Wechat\Block\Info\Wechat;
+
+$paymentTitle = $block->getMethod()->getConfigData('title', $block->getInfo()->getOrder()->getStoreId());
+?>
+<?= $block->escapeHtml($paymentTitle) ?>
+

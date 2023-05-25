@@ -8,8 +8,8 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <section id="payment" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="1">
-            <group id="alipay" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Alipay</label>
+            <group id="wechat" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Wechat</label>
                 <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -49,20 +49,41 @@
                     <validate>validate-number validate-zero-or-greater</validate>
                 </field>
 
+
                 <field id="app_id" translate="label" type="text" sortOrder="100"  showInDefault="1" showInWebsite="1">
                     <label>appId</label>
                     <validate>validate-number validate-zero-or-greater required-entry</validate>
                 </field>
 
-                <field id="merchant_private_key" translate="label" type="text" sortOrder="101" showInDefault="1"  showInWebsite="1">
-                    <label>Merchant private key</label>
+                <field id="merchant_id" translate="label" type="text" sortOrder="100"  showInDefault="1" showInWebsite="1">
+                    <label>Merchant Id</label>
+                    <validate>validate-number validate-zero-or-greater required-entry</validate>
+                </field>
+
+                <field id="merchant_certificate_serial" translate="label" type="text" sortOrder="101" showInDefault="1"  showInWebsite="1">
+                    <label>Merchant Certificate Serial</label>
                     <validate>required-entry</validate>
                 </field>
 
-                <field id="alipay_public_key" translate="label" type="text" sortOrder="101" showInDefault="1"  showInWebsite="1">
-                    <label>Alipay Public key</label>
+                <field id="merchant_private_key_file_path" translate="label" type="Magento\Config\Block\System\Config\Form\Field\File" sortOrder="101" showInDefault="1" showInWebsite="1" >
+                    <label>Merchant Private Key File Path</label>
                     <validate>required-entry</validate>
                 </field>
+
+<!--                <field id="merchant_private_key_file_path" translate="label" type="text" sortOrder="101" showInDefault="1"  showInWebsite="1">-->
+<!--                    <label>Merchant Private Key File Path</label>-->
+<!--                </field>-->
+                <field id="platform_certificate_file_path" translate="label" type="Magento\Config\Block\System\Config\Form\Field\File" sortOrder="101" showInDefault="1" showInWebsite="1" >
+                    <label>Platform Certificate File Path</label>
+                    <validate>required-entry</validate>
+                </field>
+<!--                <field id="platform_certificate_file_path" translate="label" type="text" sortOrder="101" showInDefault="1"  showInWebsite="1">-->
+<!--                    <label>Platform Certificate File Path</label>-->
+<!--                </field>-->
+                 <field id="api_key" translate="label" type="text" sortOrder="101" showInDefault="1"  showInWebsite="1">
+                     <label>Api Key</label>
+                     <validate>required-entry</validate>
+                 </field>
 
                 <field id="capture" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Capture</label>
@@ -73,6 +94,7 @@
                     <label>Modal Debug</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+
                 <field id="model"></field>
             </group>
         </section>

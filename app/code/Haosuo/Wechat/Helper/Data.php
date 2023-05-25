@@ -1,6 +1,6 @@
 <?php
 
-namespace Haosuo\Alipay\Helper;
+namespace Haosuo\Wechat\Helper;
 
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Exception\LocalizedException;
@@ -9,29 +9,40 @@ use Magento\Payment\Model\MethodInterface;
 use Magento\Store\Model\ScopeInterface;
 use UnexpectedValueException;
 
+
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    const XML_PATH_PAYMENT_METHODS = 'alipay';
+    const XML_PATH_PAYMENT_METHODS = 'wechat';
+    protected $_logger;
 
     public function __construct(
         Context $context,
         TimezoneInterface $timezone,
+        \Psr\Log\LoggerInterface $logger
     )
     {
         parent::__construct($context);
 
         $this->timezone = $timezone;
+        $this->_logger = $logger;
     }
 
 
 
-    const XML_PATH_APP_ID = 'payment/alipay/app_id';
-    const XML_PATH_MERCHANT_PRIVATE_KEY = 'payment/alipay/merchant_private_key';
-    const XML_PATH_ALIPAY_PUBLIC_KEY = 'payment/alipay/alipay_public_key';
-    const XML_PATH_MODAL_DEBUG = 'payment/alipay/modal_debug';
-    const XML_PATH_NOTIFY_URL = 'alipay/alipay/notify';
+    // 应用APPID
+    const XML_PATH_APP_ID = 'payment/wechat/app_id';
+    // 商户号
+    const XML_PATH_MERCHANT_ID = 'payment/wechat/merchant_id';
+    // 从本地文件中加载「商户API私钥」，「商户API私钥」会用来生成请求的签名
+    const XML_PATH_MERCHANT_PRIVATE_KEY_FILE_PATH = 'payment/wechat/merchant_private_key_file_path';
+    // 「商户API证书」的「证书序列号」
+    const XML_PATH_MERCHANT_CERTIFICATE_SERIAL = 'payment/wechat/merchant_certificate_serial';
+    // 微信支付平台证书
+    const XML_PATH_PLATFORM_CERTIFICATE_FILE_PATH = 'payment/wechat/platform_certificate_file_path';
+    const XML_PATH_NOTIFY_URL = 'wechat/wechat/notify';
     const XML_PATH_RETURN_URL = 'checkout/onepage/success';
-    const XML_PATH_GATEWAY_URL = 'https://openapi.alipaydev.com/gateway.do';
+    const XML_PATH_API_KEY = 'payment/wechat/api_key';
+    const XML_PATH_MODAL_DEBUG = 'payment/wechat/modal_debug';
 
     public function getAppId($storeId = null){
         return $this->scopeConfig->getValue(
@@ -41,16 +52,32 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
     }
 
-    public function getMerchantPrivateKey($storeId = null){
+    public function getMerchantId($storeId = null){
         return $this->scopeConfig->getValue(
-            self::XML_PATH_MERCHANT_PRIVATE_KEY,
+            self::XML_PATH_MERCHANT_ID,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
     }
-    public function getAlipayPublicKey($storeId = null){
+
+    public function getMerchantPrivateKeyFilePath($storeId = null){
         return $this->scopeConfig->getValue(
-            self::XML_PATH_ALIPAY_PUBLIC_KEY,
+            self::XML_PATH_MERCHANT_PRIVATE_KEY_FILE_PATH,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+    public function getMerchantCertificateSerial($storeId = null){
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_MERCHANT_CERTIFICATE_SERIAL,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    public function getPlatformCertificateFilePath($storeId = null){
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_PLATFORM_CERTIFICATE_FILE_PATH,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
@@ -64,8 +91,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return self::XML_PATH_RETURN_URL;
     }
 
-    public function getGatewayUrl($storeId = null){
-        return self::XML_PATH_GATEWAY_URL;
+    public function getApiKey($storeId = null){
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_API_KEY,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 
     public function getModalDebug($storeId = null){
@@ -75,6 +106,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $storeId
         );
     }
+
 
     /**
      * Get config name of method model
@@ -108,6 +140,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         return $this->_methodFactory->create($class);
     }
+
 
     /**
      * 请确保项目文件有可写权限，不然打印不了日志。

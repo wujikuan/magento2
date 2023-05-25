@@ -53,14 +53,17 @@ class AlipayTradeService {
     // 日志方法对象
     private $logger;
 
+    protected $_dataHelper;
     /**
      * @param \Haosuo\Alipay\Helper\Data $dataHelper
      * @throws Exception
      */
-	function __construct(){
+	function __construct(
+        \Haosuo\Alipay\Helper\Data $dataHelper
+    ){
 
-        $dataHelper = \Magento\Framework\App\ObjectManager::getInstance()->get('\Haosuo\Alipay\Helper\Data');
-
+//        $dataHelper = \Magento\Framework\App\ObjectManager::getInstance()->get('');
+        $this->_dataHelper = $dataHelper;
         $this->gateway_url = $dataHelper->getGatewayUrl();
 		$this->appid = $dataHelper->getAppId();
 		$this->private_key = $dataHelper->getMerchantPrivateKey();
@@ -68,23 +71,6 @@ class AlipayTradeService {
 		$this->charset = 'UTF-8';
 		$this->signtype = 'RSA2';
         $this->log_path = '';
-
-
-		if(empty($this->appid)||trim($this->appid)==""){
-			throw new Exception("appid should not be NULL!");
-		}
-		if(empty($this->private_key)||trim($this->private_key)==""){
-			throw new Exception("private_key should not be NULL!");
-		}
-		if(empty($this->alipay_public_key)||trim($this->alipay_public_key)==""){
-			throw new Exception("alipay_public_key should not be NULL!");
-		}
-		if(empty($this->charset)||trim($this->charset)==""){
-			throw new Exception("charset should not be NULL!");
-		}
-		if(empty($this->gateway_url)||trim($this->gateway_url)==""){
-			throw new Exception("gateway_url should not be NULL!");
-		}
 
 	}
 
@@ -99,7 +85,7 @@ class AlipayTradeService {
 
 		$biz_content=$builder->getBizContent();
 		//打印业务参数
-		$this->writeLog($biz_content);
+		$this->_dataHelper->writeLog($biz_content);
 
 		$request = new AlipayTradePagePayRequest();
 
@@ -142,7 +128,7 @@ class AlipayTradeService {
 		}
 
 		//打开后，将报文写入log文件
-		$this->writeLog("response: ".var_export($result,true));
+        $this->_dataHelper->writeLog("response: ".var_export($result,true));
 		return $result;
 	}
 
@@ -154,7 +140,7 @@ class AlipayTradeService {
 	function Query($builder){
 		$biz_content=$builder->getBizContent();
 		//打印业务参数
-		$this->writeLog($biz_content);
+        $this->_dataHelper->writeLog($biz_content);
 		$request = new AlipayTradeQueryRequest();
 		$request->setBizContent ( $biz_content );
 
@@ -171,7 +157,7 @@ class AlipayTradeService {
 	function Refund($builder){
 		$biz_content=$builder->getBizContent();
 		//打印业务参数
-		$this->writeLog($biz_content);
+        $this->_dataHelper->writeLog($biz_content);
 		$request = new AlipayTradeRefundRequest();
 		$request->setBizContent ( $biz_content );
 
@@ -188,7 +174,7 @@ class AlipayTradeService {
 	function Close($builder){
 		$biz_content=$builder->getBizContent();
 		//打印业务参数
-		$this->writeLog($biz_content);
+        $this->_dataHelper->writeLog($biz_content);
 		$request = new AlipayTradeCloseRequest();
 		$request->setBizContent ( $biz_content );
 
@@ -205,7 +191,7 @@ class AlipayTradeService {
 	function refundQuery($builder){
 		$biz_content=$builder->getBizContent();
 		//打印业务参数
-		$this->writeLog($biz_content);
+        $this->_dataHelper->writeLog($biz_content);
 		$request = new AlipayTradeFastpayRefundQueryRequest();
 		$request->setBizContent ( $biz_content );
 
@@ -220,7 +206,7 @@ class AlipayTradeService {
 	function downloadurlQuery($builder){
 		$biz_content=$builder->getBizContent();
 		//打印业务参数
-		$this->writeLog($biz_content);
+        $this->_dataHelper->writeLog($biz_content);
 		$request = new alipaydatadataservicebilldownloadurlqueryRequest();
 		$request->setBizContent ( $biz_content );
 
@@ -240,19 +226,6 @@ class AlipayTradeService {
 		$result = $aop->rsaCheckV1($arr, $this->alipay_public_key, $this->signtype);
 
 		return $result;
-	}
-
-	/**
-	 * 请确保项目文件有可写权限，不然打印不了日志。
-	 */
-	function writeLog($text) {
-		// $text=iconv("GBK", "UTF-8//IGNORE", $text);
-		//$text = characet ( $text );
-        if(!empty($this->log_path) && trim($this->log_path)!=""){
-            // file_put_contents ( $this->log_path, date ( "Y-m-d H:i:s" ) . "  " . $text . "\r\n", FILE_APPEND );
-            // $this->logger->debug(date ( "Y-m-d H:i:s" ) . "  " . $text . "\r\n");
-        }
-        \Magento\Framework\App\ObjectManager::getInstance()->get('Psr\Log\LoggerInterface')->debug(date ( "Y-m-d H:i:s" ) . "  " . $text . "\r\n");
 	}
 }
 

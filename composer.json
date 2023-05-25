@@ -21,7 +21,8 @@
         "magento/composer-root-update-plugin": "~2.0",
         "magento/product-community-edition": "2.4.5",
         "mageplaza/magento-2-chinese-language-pack": "dev-master",
-        "mageplaza/module-smtp": "^4.7"
+        "mageplaza/module-smtp": "^4.7",
+        "wechatpay/wechatpay": "^1.4"
     },
     "autoload": {
         "exclude-from-classmap": [

@@ -4,11 +4,9 @@
  * See COPYING.txt for license details.
  */
 
-namespace Haosuo\Alipay\Model\Method;
+namespace Haosuo\Wechat\Model\Method;
 
-use Haosuo\Alipay\Helper\Data as DataHelper;
-use Haosuo\Alipay\Model\AlipayTrade\pagepay\buildermodel\AlipayTradeRefundContentBuilder;
-use Haosuo\Alipay\Model\AlipayTrade\pagepay\service\AlipayTradeService;
+
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\DataObject;
 use Magento\Payment\Model\InfoInterface;
@@ -17,6 +15,8 @@ use Magento\Payment\Observer\AbstractDataAssignObserver;
 use Magento\Quote\Api\Data\PaymentMethodInterface;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Directory\Helper\Data as DirectoryHelper;
+use Haosuo\Wechat\Model\WechatPayMethod;
+use Haosuo\Wechat\Helper\Data as DataHelper;
 
 
 /**
@@ -133,11 +133,6 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
      */
     protected $_canReviewPayment = false;
 
-    /**
-     * TODO: whether a captured transaction may be voided by this gateway
-     * This may happen when amount is captured, but not settled
-     * @var bool
-     */
 
     /**
      * @var array
@@ -166,8 +161,9 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
      */
     private $directory;
 
-    protected $_alipayTradeRefund;
     protected $_order;
+    protected $_wechatPayMethod;
+    protected $_dataHelper;
 
     /**
      * @param \Magento\Framework\Model\Context $context
@@ -177,10 +173,9 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
      * @param \Magento\Payment\Helper\Data $paymentData
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Payment\Model\Method\Logger $logger
-     * @param AlipayTradeRefundContentBuilder $alipayTradeRefund
-     * @param AlipayTradeService $alipayTradeService
      * @param \Magento\Sales\Model\OrderFactory $order
      * @param DataHelper $dataHelper
+     * @param WechatPayMethod $wechatPayMethod
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
      * @param DirectoryHelper|null $directory
@@ -194,14 +189,12 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         \Magento\Payment\Helper\Data $paymentData,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Payment\Model\Method\Logger $logger,
-        AlipayTradeRefundContentBuilder $alipayTradeRefund,
-        AlipayTradeService $alipayTradeService,
         \Magento\Sales\Model\OrderFactory $order,
         DataHelper $dataHelper,
+        WechatPayMethod $wechatPayMethod,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         DirectoryHelper $directory = null,
-
         array $data = [],
     ) {
         parent::__construct(
@@ -218,13 +211,8 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         $this->logger = $logger;
         $this->directory = $directory ?: ObjectManager::getInstance()->get(DirectoryHelper::class);
         $this->initializeData($data);
-
-//        $this->_alipayTradeRefund = \Magento\Framework\App\ObjectManager::getInstance()->get('\Haosuo\Alipay\Model\AlipayTrade\pagepay\buildermodel\AlipayTradeRefundContentBuilder');
-//        $this->_alipayTradeService = \Magento\Framework\App\ObjectManager::getInstance()->get('\Haosuo\Alipay\Model\AlipayTrade\pagepay\service\AlipayTradeService');
-//        $this->_order = \Magento\Framework\App\ObjectManager::getInstance()->get('\Magento\Sales\Model\OrderFactory');
-        $this->_alipayTradeRefund = $alipayTradeRefund;
-        $this->_alipayTradeService = $alipayTradeService;
         $this->_order = $order;
+        $this->_wechatPayMethod = $wechatPayMethod;
         $this->_dataHelper = $dataHelper;
     }
 
@@ -643,6 +631,7 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         if (!$this->canRefund()) {
             throw new \Magento\Framework\Exception\LocalizedException(__('The refund action is not available.'));
         }
+
         $orderId = $payment->getData('parent_id');
         $order = $this->_order->create()->load($orderId);
         if (!$order){
@@ -651,21 +640,16 @@ abstract class AbstractMethod extends \Magento\Framework\Model\AbstractExtensibl
         $outTradeNo = $order->getData('increment_id');
         $tradeNo = $payment->getData('last_trans_id');
 
-        $this->_alipayTradeRefund->setOutTradeNo($outTradeNo);
-        $this->_alipayTradeRefund->setTradeNo($tradeNo);
-        $this->_alipayTradeRefund->setRefundAmount($amount);
-        $response = $this->_alipayTradeService->Refund($this->_alipayTradeRefund);
-
-        $this->_dataHelper->writeLog('alipay_refund_start');
+        $response = $this->_wechatPayMethod->refund($tradeNo,$outTradeNo,$amount,$amount);
+//        if ($response->status != 'SUCCESS'){
+//            throw new \Magento\Framework\Exception\LocalizedException(__('The refund order is fail. code'));
+//        }
+        $this->_dataHelper->writeLog('wechat_refund_start');
         $this->_dataHelper->writeLog(var_export($response,true));
-        $this->_dataHelper->writeLog('alipay_refund_end');
-        if ($response->code != 10000 && $response->msg != 'Success'){
-            throw new \Magento\Framework\Exception\LocalizedException(__('The refund order is fail.'));
-        }
+        $this->_dataHelper->writeLog('wechat_refund_end');
+
         $payment->setIsTransactionClosed(true);
-
-        $payment->addTransactionCommentsToOrder($tradeNo,'Alipay Refund Success');
-
+        $payment->addTransactionCommentsToOrder($tradeNo,'Wechat Refund Success');
         $payment->save();
 
         return $this;
