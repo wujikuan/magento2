@@ -37,6 +37,9 @@
 ## Default index file
 
     DirectoryIndex index.php
+    
+    AddType application/javascript .js
+    AddType text/css .css
 
 <IfModule mod_php7.c>
 ############################################

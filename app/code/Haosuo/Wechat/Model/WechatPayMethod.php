@@ -4,9 +4,9 @@ namespace Haosuo\Wechat\Model;
 
 use Haosuo\Wechat\Helper\Data;
 
-use WeChatPay\Builder;
-use WeChatPay\Crypto\Rsa;
-use WeChatPay\Util\PemUtil;
+use \WeChatPay\Builder;
+use \WeChatPay\Crypto\Rsa;
+use \WeChatPay\Util\PemUtil;
 
 class WechatPayMethod
 {

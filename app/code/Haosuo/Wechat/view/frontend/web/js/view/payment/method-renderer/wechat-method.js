@@ -32,7 +32,7 @@ define([
         redirectAfterPlaceOrder: false,
         isPlaceOrderActionAllowed: ko.observable(quote.billingAddress() != null),
         defaults: {
-            template: 'Haosuo_Wechat/payment/Wechat'
+            template: 'Haosuo_Wechat/payment/wechat'
         },
         initChildren: function () {
             this.messageContainer = new Messages();

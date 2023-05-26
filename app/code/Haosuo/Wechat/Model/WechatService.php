@@ -110,7 +110,7 @@ class WechatService  implements WechatServiceInterface
         if (!is_dir($root.$path)){
             mkdir(
                 $root.$path,
-                777,
+                0775,
                 true
             );
         }

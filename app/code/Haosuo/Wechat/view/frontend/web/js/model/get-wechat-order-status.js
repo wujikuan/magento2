@@ -20,11 +20,6 @@ define(
         return function (serviceUrl, payload, messageContainer) {
             var headers = {};
 
-            // fullScreenLoader.startLoader();
-            // _.each(hooks.requestModifiers, function (modifier) {
-            //     modifier(headers, payload);
-            // });
-
             return storage.post(
                 serviceUrl, JSON.stringify(payload), true, 'application/json', headers
             ).fail(
@@ -37,13 +32,6 @@ define(
                     if (response.responseType !== 'error') {
                         return response;
                     }
-                }
-            ).always(
-                function () {
-                    // fullScreenLoader.stopLoader();
-                    // _.each(hooks.afterRequestListeners, function (listener) {
-                    //     listener();
-                    // });
                 }
             );
         };

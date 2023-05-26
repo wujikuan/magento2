@@ -17,9 +17,9 @@ use Magento\Sales\Model\Order\ShipmentFactory;
 use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\CreditmemoFactory;
 use Magento\Sales\Model\Order\Payment\Transaction\BuilderInterface as TransactionBuilderInterface;
-use WeChatPay\Crypto\Rsa;
-use WeChatPay\Crypto\AesGcm;
-use WeChatPay\Formatter;
+use \WeChatPay\Crypto\Rsa;
+use \WeChatPay\Crypto\AesGcm;
+use \WeChatPay\Formatter;
 use Haosuo\Wechat\Model\WechatPayMethod;
 
 
@@ -225,6 +225,7 @@ class Notify extends \Magento\Framework\App\Action\Action implements CsrfAwareAc
 
         //转化为关联数组
         $getCallBackArray = json_decode($getCallBackJson, true);
+
         // todo delete start
         $resultArray = $getCallBackArray;
         $resultArray['out_trade_no'] = $_POST['increamentId'];
