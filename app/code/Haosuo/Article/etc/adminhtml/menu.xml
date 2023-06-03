@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	<!-- 添加自定义链接到导航 -->
+    	<add id="Haosuo_Article::customArticles" title="Custom Article" module="Haosuo_Article" sortOrder="10" resource="Haosuo_Article::customArticles" parent="Magento_Backend::stores"/>
+		<add id="Haosuo_Article::customArticles_customArticles" title="Manage Article" module="Haosuo_Article" sortOrder="10" parent="Haosuo_Article::customArticles" action="articleadmin/customArticle" resource="Haosuo_Article::customArticles_customArticle"/>
+    </menu>
+</config>

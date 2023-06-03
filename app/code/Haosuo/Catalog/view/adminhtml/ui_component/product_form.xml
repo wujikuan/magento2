@@ -1,0 +1,23 @@
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <!--field sets can be nested -->
+    <fieldset name="content">
+<!--        <argument name="data" xsi:type="array">-->
+<!--            <item name="config" xsi:type="array">-->
+<!--                <item name="label" xsi:type="string" translate="true">Nested fieldset Label as displayed in UI</item>-->
+<!--                <item name="collapsible" xsi:type="boolean">true</item>-->
+<!--            </item>-->
+<!--        </argument>-->
+<!--        <field name="select_choose_second">-->
+<!--            <argument name="data" xsi:type="array">-->
+<!--                <item name="options" xsi:type="object">Haosuo\Catalog\Model\Config\Source\SelectChooseOptions</item>-->
+<!--                <item name="config" xsi:type="array">-->
+<!--                    <item name="label" xsi:type="string" translate="true">Select Choose Second</item>-->
+<!--                    <item name="formElement" xsi:type="string">select</item>-->
+<!--                    <item name="componentType" xsi:type="string">field</item>-->
+<!--                    <item name="dataScope" xsi:type="string">select_choose_second</item>-->
+<!--                    <item name="sortOrder" xsi:type="number">1001</item>-->
+<!--                </item>-->
+<!--            </argument>-->
+<!--        </field>-->
+    </fieldset>
+</form>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="menu">
+            <action method="setActive">
+                <argument name="itemId" xsi:type="string">Zou_Demo::physicalStores</argument>
+            </action>
+        </referenceBlock>
+        <referenceContainer name="content">
+        	<block class="Haosuo\Article\Block\Adminhtml\CustomArticle\Edit" name="customArticle_edit"/>
+        </referenceContainer>
+        <referenceContainer name="left">
+	        <block class="Haosuo\Article\Block\Adminhtml\CustomArticle\Edit\Tabs" name="customArticle_edit_tabs">
+	            <block class="Haosuo\Article\Block\Adminhtml\CustomArticle\Edit\Tab\Form" name="customArticle_edit_tab_form"/>
+	        	<action method="addTab">
+	                <argument name="name" xsi:type="string">main_section</argument>
+	                <argument name="block" xsi:type="string">customArticle_edit_tab_form</argument>
+	            </action>
+	        </block>
+        </referenceContainer>
+    </body>
+</page>

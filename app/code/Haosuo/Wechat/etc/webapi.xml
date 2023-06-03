@@ -7,14 +7,14 @@
 -->
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
-    <route url="/V1/wechat/redirect/get_url" method="POST">
+    <route url="/V1/wechat/redirect/get_url" method="GET">
         <service class="Haosuo\Wechat\Api\WechatServiceInterface" method="getOrderPlaceRedirectUrl"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>
     </route>
 
-    <route url="/V1/wechat/redirect/get_order_status" method="POST">
+    <route url="/V1/wechat/redirect/get_order_status" method="GET">
         <service class="Haosuo\Wechat\Api\WechatServiceInterface" method="getOrderPaymentStatus"/>
         <resources>
             <resource ref="anonymous"/>

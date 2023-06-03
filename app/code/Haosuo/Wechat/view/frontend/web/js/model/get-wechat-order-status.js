@@ -9,12 +9,9 @@ define(
     [
         'mage/storage',
         'Magento_Checkout/js/model/error-processor',
-        'Magento_Checkout/js/model/full-screen-loader',
-        'Magento_Customer/js/customer-data',
-        'Magento_Checkout/js/model/payment/place-order-hooks',
         'underscore'
     ],
-    function (storage, errorProcessor, fullScreenLoader, customerData, hooks, _) {
+    function (storage, errorProcessor,  _) {
         'use strict';
 
         return function (serviceUrl, payload, messageContainer) {
