@@ -12,11 +12,10 @@ class CustomArticle extends \Magento\Framework\Model\AbstractModel
     /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param ResourceModel\CustomArticle $resource
-     * @param ResourceModel\CustomArticle\Collection $resourceCollection
+     * @param \Haosuo\Article\Model\ResourceModel\CustomArticle $resource
+     * @param \Haosuo\Article\Model\ResourceModel\CustomArticle\Collection $resourceCollection
      * @param \Magento\Directory\Model\ResourceModel\Country\Collection $countryCollection
      */
-    //构造函数，传递PhysicalStore和PhysicalStore\Collection 两个参数，实例化
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,

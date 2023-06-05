@@ -6,57 +6,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 
 class Save extends \Haosuo\Article\Controller\Adminhtml\CustomArticle
 {
-    public $_adapterFactory;
 
-    public $_fileSystem;
-    /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Haosuo\Article\Model\CustomArticle $customArticleFactory
-     * @param \Haosuo\Article\Model\ResourceModel\CustomArticle\Collection $customArticleCollectionFactory
-     * @param \Magento\Framework\Registry $coreRegistry
-     * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
-     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
-     * @param \Magento\Framework\View\Result\LayoutFactory $resultLayoutFactory
-     * @param \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Backend\Helper\Js $jsHelper
-     * @param \Magento\Framework\Stdlib\DateTime\DateTime $date
-     * @param \Magento\Framework\Image\AdapterFactory $adapterFactory
-     */
-    public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Haosuo\Article\Model\CustomArticle $customArticleFactory,
-        \Haosuo\Article\Model\ResourceModel\CustomArticle\Collection $customArticleCollectionFactory,
-        \Magento\Framework\Registry $coreRegistry,
-        \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
-        \Magento\Framework\View\Result\LayoutFactory $resultLayoutFactory,
-        \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Backend\Helper\Js $jsHelper,
-        \Magento\Framework\Stdlib\DateTime\DateTime $date,
-        \Magento\Framework\Image\AdapterFactory $adapterFactory,
-        \Magento\Framework\Filesystem $filesystem
-    )
-    {
-        parent::__construct(
-            $context,
-            $customArticleFactory,
-            $customArticleCollectionFactory,
-            $coreRegistry,
-            $fileFactory,
-            $resultPageFactory,
-            $resultLayoutFactory,
-            $resultForwardFactory,
-            $storeManager,
-            $jsHelper,
-            $date
-        );
-
-        $this->_adapterFactory = $adapterFactory;
-        $this->_fileSystem = $filesystem;
-
-    }
 
     /**
      * @var \Magento\Framework\View\Result\PageFactory
@@ -67,8 +17,6 @@ class Save extends \Haosuo\Article\Controller\Adminhtml\CustomArticle
         $formPostValues = $this->getRequest()->getPostValue();
         if ($formPostValues) {
             $customArticleData = $formPostValues;
-            $customArticleData['url_key']=str_replace(array(' ','ä','å','ö'),array('','a','a','o'),strtolower($customArticleData['url_key']));
-
 
             $customArticleId = isset($customArticleData['id']) ? $customArticleData['id'] : null;
 
@@ -85,7 +33,7 @@ class Save extends \Haosuo\Article\Controller\Adminhtml\CustomArticle
 
             if ($imageRequest && strlen($fileName)) {
                 /*
-                 * Save image upload
+                 * Save image uploadl
                  */
                 try {
                     $uploader = $this->_objectManager->create(

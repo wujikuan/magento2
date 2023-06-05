@@ -3,7 +3,7 @@
     <body>
         <referenceBlock name="menu">
             <action method="setActive">
-                <argument name="itemId" xsi:type="string">Zou_Demo::physicalStores</argument>
+                <argument name="itemId" xsi:type="string">Haosuo_Article::customArticles</argument>
             </action>
         </referenceBlock>
         <referenceContainer name="content">

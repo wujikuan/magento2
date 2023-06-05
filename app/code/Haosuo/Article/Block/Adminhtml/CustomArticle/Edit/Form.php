@@ -1,6 +1,6 @@
 <?php
 
-namespace Haosuo\Aticle\Block\Adminhtml\CustomArticle\Edit;
+namespace Haosuo\Article\Block\Adminhtml\CustomArticle\Edit;
 
 /**
  * Adminhtml locator edit form block.

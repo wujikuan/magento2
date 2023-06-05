@@ -1,15 +1,26 @@
 <?php
 namespace Haosuo\Article\Controller\Adminhtml;
 
-abstract class CustomArticle extends \Magento\Backend\App\Action
+use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\Request\InvalidRequestException;
+use Magento\Framework\App\RequestInterface;
+
+abstract class CustomArticle extends \Magento\Backend\App\Action implements CsrfAwareActionInterface
+
 {
     const PARAM_CRUD_ID = 'id';
     protected $_customArticleFactory;
     protected $_customArticleCollectionFactory;
 
+    public $_adapterFactory;
+
+    public $_fileSystem;
+
+
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Haosuo\Article\Model\CustomArticle $customArticleFactory,
+        \Haosuo\Article\Model\CustomArticleFactory $customArticleFactory,
         \Haosuo\Article\Model\ResourceModel\CustomArticle\CollectionFactory $customArticleCollectionFactory,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
@@ -18,7 +29,9 @@ abstract class CustomArticle extends \Magento\Backend\App\Action
         \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Backend\Helper\Js $jsHelper,
-        \Magento\Framework\Stdlib\DateTime\DateTime $date
+        \Magento\Framework\Stdlib\DateTime\DateTime $date,
+        \Magento\Framework\Image\AdapterFactory $adapterFactory,
+        \Magento\Framework\Filesystem $filesystem
         ) {
             parent::__construct($context);
             $this->_coreRegistry = $coreRegistry;
@@ -33,6 +46,9 @@ abstract class CustomArticle extends \Magento\Backend\App\Action
             $this->_customArticleFactory = $customArticleFactory;
             $this->_customArticleCollectionFactory = $customArticleCollectionFactory;
             $this->_date = $date;
+
+            $this->_adapterFactory = $adapterFactory;
+            $this->_fileSystem = $filesystem;
     }
 
     /**
@@ -64,6 +80,10 @@ abstract class CustomArticle extends \Magento\Backend\App\Action
 
         return $resultRedirect;
     }
+    public function execute()
+    {
+
+    }
 
     /**
      * Check if admin has permissions to visit related pages.
@@ -72,6 +92,18 @@ abstract class CustomArticle extends \Magento\Backend\App\Action
      */
     protected function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Haosuo_Article::customArticles_customArticles');
+        return true;
+        // return $this->_authorization->isAllowed('Haosuo_Article::customArticles_customArticles');
     }
+
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
+        return null;
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
+    }
+
 }

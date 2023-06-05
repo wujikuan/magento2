@@ -146,7 +146,8 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic implements \Magent
 
         $fieldset->addField(
             'sort_order',
-            'number', [
+            'text',
+            [
                 'name' => 'sort_order',
                 'label' => __('Sort Order'),
                 'title' => __('Sort Order')

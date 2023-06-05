@@ -1,5 +1,5 @@
 <?php
-namespace Haosuo\Aticle\Block\Adminhtml\CustomArticle\Edit;
+namespace Haosuo\Article\Block\Adminhtml\CustomArticle\Edit;
 
 class Tabs extends \Magento\Backend\Block\Widget\Tabs
 {
